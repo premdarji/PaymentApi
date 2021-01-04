@@ -18,10 +18,9 @@ namespace PaymentAPI.Controllers
 
         CategoryValidator validator = new CategoryValidator();
 
-
-        public CategoryController(ICategoryDomain category)
+        public CategoryController(ICategoryDomain Category)
         {
-            this._Category = category;
+            this._Category = Category;
         }
 
         [HttpGet]
@@ -38,9 +37,9 @@ namespace PaymentAPI.Controllers
 
         [HttpGet]
         [Route("GetById/{id}")]
-        public async Task<ActionResult> GetById(int id)
+        public async Task<ActionResult> GetById(int Id)
         {
-            var city = await _Category.GetById(id);
+            var city = await _Category.GetById(Id);
             if (city != null)
             {
                 return Ok(city);
@@ -50,17 +49,17 @@ namespace PaymentAPI.Controllers
 
         [HttpPost]
         [Route("Add")]
-        public async Task<ActionResult> Post(Category model)
+        public async Task<ActionResult> Post(Category Model)
         {
 
-            ValidationResult result = validator.Validate(model);
+            ValidationResult result = validator.Validate(Model);
 
             if (result.IsValid == false)
             {
                 return BadRequest(new { result.Errors });
             }
 
-            var status = await _Category.Post(model);
+            var status = await _Category.Post(Model);
             if (status == true)
             {
                 return Ok(new { message = "Category Added" });
@@ -69,10 +68,10 @@ namespace PaymentAPI.Controllers
         }
 
         [HttpPut]
-        [Route("Update/{id}")]
-        public async Task<ActionResult> Update(int id,Category model)
+        [Route("Update")]
+        public async Task<ActionResult> Update(Category Model)
         {
-            ValidationResult result = validator.Validate(model);
+            ValidationResult result = validator.Validate(Model);
 
             if (result.IsValid == false)
             {
@@ -81,7 +80,7 @@ namespace PaymentAPI.Controllers
 
 
 
-            var status =await  _Category.Put(id,model);
+            var status =await  _Category.Put(Model);
             if (status == true)
             {
                 return Ok(new { message = "Category Updated" });
@@ -91,9 +90,9 @@ namespace PaymentAPI.Controllers
 
         [HttpDelete]
         [Route("Delete/{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(int Id)
         {
-            var status =  await _Category.Delete(id);
+            var status =  await _Category.Delete(Id);
             if (status == true)
             {
                 return Ok(new { message = "Category Deleted" });

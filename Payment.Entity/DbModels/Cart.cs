@@ -12,6 +12,8 @@ namespace Payment.Entity.DbModels
 
         public int Quantity { get; set; }
 
+        public DateTime CreatedOn { get; set; }
+
         //foreign key to product
         public int ProductId { get; set; }
 

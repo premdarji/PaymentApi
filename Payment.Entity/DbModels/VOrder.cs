@@ -18,5 +18,7 @@ namespace Payment.Entity.DbModels
         public string ImageUrl { get; set; }
         public DateTime CreatedOn { get; set; }
         public int UserId { get; set; }
+
+        public int OrderId { get; set; }
     }
 }

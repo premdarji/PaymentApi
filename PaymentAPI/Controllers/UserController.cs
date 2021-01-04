@@ -28,7 +28,7 @@ namespace PaymentAPI.Controllers
         UserVMvalidator vmvalidator = new UserVMvalidator();
         Loginvalidator loginvalidator = new Loginvalidator();
 
-     private readonly ApplicationSettings _setting;
+         private readonly ApplicationSettings _setting;
         public UserController(IUserDomain _domain,IOptions<ApplicationSettings> setting)
         {
             this._domain = _domain;
@@ -38,17 +38,21 @@ namespace PaymentAPI.Controllers
 
         [HttpPost]
         [Route("Register")]
-        public async Task<ActionResult<IList<ValidationFailure>>> Post(User model)
+        public async Task<ActionResult<IList<ValidationFailure>>> Post(User Model)
         { 
-            ValidationResult result = validator.Validate(model);
+            ValidationResult result = validator.Validate(Model);
+            //  int id = model.CityId.Value; check error
 
-            if (result.IsValid == false)
+            // string[] myarray = new string[10]; google
+
+         
+            if (result.IsValid  == false)
             {
                 return BadRequest(new { result.Errors });
             }
 
-
-            var status = await _domain.Post(model);
+            
+            var status = await _domain.Post(Model);
 
             if (status == true)
             {
@@ -62,15 +66,16 @@ namespace PaymentAPI.Controllers
         [HttpPut]
         [Route("Update/{id}")]
 
-        public async Task<ActionResult> Put(int id,UserVM model)
+        public async Task<ActionResult> Put(int Id,UserVM Model)
         {
-            if (id == 0)
+          
+            if (Id == 0)
             {
                 return BadRequest();
             }
             else
             {
-                ValidationResult result = vmvalidator.Validate(model);
+                ValidationResult result = vmvalidator.Validate(Model);
 
                 if (result.IsValid == false)
                 {
@@ -78,7 +83,7 @@ namespace PaymentAPI.Controllers
                 }
 
 
-                var status = await _domain.Put(id, model);
+                var status = await _domain.Put(Id, Model);
                 if (status == true)
                 {
                     return Ok();
@@ -92,22 +97,23 @@ namespace PaymentAPI.Controllers
 
         [HttpGet]
         [Route("GetbyId/{id}")]
-        public async Task<ActionResult> GetUserByID(int id)
+        public async Task<ActionResult> GetUserByID(int Id)
         {
-            var user = await _domain.GetbyID(id);
+            var user = await _domain.GetbyID(Id);
             if (user!=null)
             {
                 return Ok(user);
             }
             return BadRequest(new {message= "User dont exist"});
+           
         }
 
 
         [HttpDelete]
         [Route("delete/{id}")]
-        public async  Task<ActionResult> Delete(int id)
+        public async  Task<ActionResult> Delete(int Id)
         {
-            var status = await _domain.Delete(id);
+            var status = await _domain.Delete(Id);
             if (status == true)
             {
                 return Ok(new { message = "user deleted" });
@@ -123,7 +129,31 @@ namespace PaymentAPI.Controllers
             return users;
         }
        
+        [HttpPost]
+        [Route("Activate/{id}")]
+        public async Task<ActionResult> ActivateUser(int id)
+        {
+            var result = await _domain.ActivateUser(id);
+            if (result == true)
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
 
 
+
+       
+
+    }
+
+
+
+
+    public class Apiresponsemodel
+    {
+        public int StatusCode { get; set; }
+        public string Message { get; set; }
+        public dynamic  ResponseData { get; set; } //check generic return type
     }
 }

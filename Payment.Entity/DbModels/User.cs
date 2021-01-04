@@ -32,9 +32,13 @@ namespace Payment.Entity.DbModels
         [Column(TypeName = "nvarchar(max)")]
         public string Password { get; set; }
 
+        public bool IsAdmin { get; set; }
+
+        public bool IsActivated { get; set; }
+
 
         //foreign key to city table
-        public int CityId { get; set; }
+        public Nullable<int> CityId { get; set; }
 
 
         public City city { get; set; }

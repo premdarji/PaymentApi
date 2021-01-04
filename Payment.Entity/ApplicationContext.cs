@@ -36,5 +36,21 @@ namespace Payment.Entity
        public DbSet<DetailOrder> DetailOrders { get; set; } 
 
 
+    
+        public DbSet<Common> CommonFields { get; set; }
+
+        public DbSet<ErrorDetails> Errordetails { get; set; }
+
+
+
+        public DbSet<InvoiceViewModel> InvoiceViewModel { get; set; }
+
+        public DbSet<Invoice> Invoice { get; set; }
+
+        public DbSet<vInvoice> vInvoice { get; set; }
+
+        public DbSet<CancelOrder> CancelOrder { get; set; }
+
+
     }
 }

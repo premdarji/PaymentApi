@@ -23,7 +23,7 @@ namespace Payment.Entity.ViewModels
         public string Description { get; set; }
 
 
-        public int Rating { get; set; }
+       //public int Rating { get; set; }
 
 
         public string ImageUrl { get; set; }

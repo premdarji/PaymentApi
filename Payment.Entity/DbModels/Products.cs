@@ -23,8 +23,8 @@ namespace Payment.Entity.DbModels
         [Column(TypeName = "nvarchar(max)")]
         public string Description { get; set; }
 
-        [Column(TypeName ="int")]
-        public int Rating { get; set; }
+        //[Column(TypeName ="int")]
+        //public int Rating { get; set; }
 
         [Column(TypeName ="nvarchar(max)")]
         public string ImageUrl { get; set; }
@@ -32,7 +32,7 @@ namespace Payment.Entity.DbModels
         //foreign key
         public int CategoryId { get; set; }
 
-        public Category Category { get; set; }
+       // public Category Categories { get; set; }
 
         public ICollection<Cart> Cart { get; set; }
 

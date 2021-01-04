@@ -12,15 +12,16 @@ namespace Payment.Domain
     public class WishlistDomain : IWishlistDomain
     {
         ApplicationContext _context;
-        public WishlistDomain(ApplicationContext context)
+        public WishlistDomain(ApplicationContext Context)
         {
-            _context = context;
+            _context = Context;
                 
         }
-        public async Task<bool> Delete(int id,int userid)
+        public async Task<bool> Delete(int Id,int Userid)
         {
-            var wish = await _context.Wishlist.FirstOrDefaultAsync(m => m.ProductId.Equals(id) && m.UserId.Equals(userid));
-            _context.Wishlist.Remove(wish);
+            var wish = await _context.Wishlist.FirstOrDefaultAsync(m => m.ProductId.Equals(Id) && m.UserId.Equals(Userid));
+            var test = wish != null ? _context.Wishlist.Remove(wish) : null;
+            //_context.Wishlist.Remove(wish);
             var status = await _context.SaveChangesAsync();
             if (status > 0)
             {
@@ -34,12 +35,12 @@ namespace Payment.Domain
             return await _context.Wishlist.ToListAsync();
         }
 
-        public async Task<bool> Post(Wishlist model)
+        public async Task<bool> Post(Wishlist Model)
         {
-            var wish = await _context.Wishlist.FirstOrDefaultAsync(m => m.ProductId == model.ProductId && m.UserId == model.UserId);
+            var wish = await _context.Wishlist.FirstOrDefaultAsync(m => m.ProductId == Model.ProductId && m.UserId == Model.UserId);
             if (wish == null)
             {
-                await _context.Wishlist.AddAsync(model);
+                await _context.Wishlist.AddAsync(Model);
                 var status =await _context.SaveChangesAsync();
                 if (status > 0)
                 {
@@ -58,8 +59,8 @@ namespace Payment.Domain
 
     public interface IWishlistDomain
     {
-        Task<bool> Post(Wishlist model);
-        Task<bool> Delete(int id,int userid);
+        Task<bool> Post(Wishlist Model);
+        Task<bool> Delete(int Id,int Userid);
 
         Task<List<Wishlist>> GetAll();
     }

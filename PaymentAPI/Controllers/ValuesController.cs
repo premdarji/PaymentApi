@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LoggerService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace PaymentAPI.Controllers
@@ -10,10 +11,19 @@ namespace PaymentAPI.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+
+        private readonly ILoggerManager _logger;
+
+        public ValuesController(ILoggerManager logger)
+        {
+            _logger = logger;
+        }
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
+            _logger.LogInfo("Here is info message from the value controller.");
+            //throw new Exception("Exception while fetching all the data from values controller");
             return new string[] { "value1", "value2" };
         }
 

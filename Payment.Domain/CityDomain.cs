@@ -16,17 +16,17 @@ namespace Payment.Domain
         ApplicationContext _context;
 
         private readonly IMapper _mapper;
-        public CityDomain(ApplicationContext context,IMapper mapper)
+        public CityDomain(ApplicationContext Context,IMapper mapper)
         {
-            _context = context;
+            _context = Context;
             _mapper = mapper;
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task<bool> Delete(int Id)
         {
-            var city = await _context.Cities.FirstOrDefaultAsync(c => c.CityId.Equals(id));
-            
-             _context.Cities.Remove(city);
+            var city = await _context.Cities.FirstOrDefaultAsync(c => c.CityId.Equals(Id));
+            var test = city != null ? _context.Cities.Remove(city) : null;
+             //_context.Cities.Remove(city);
             var status =await _context.SaveChangesAsync();
             if (status > 0)
             {
@@ -37,15 +37,19 @@ namespace Payment.Domain
 
         public async Task<List<City>> GetAll()
         {
-            return await _context.Cities.ToListAsync();
-          
+            //var cities = (from city in _context.Cities
+            //              orderby city.CityName descending
+            //             select city).ToList();
             //return cities;
-           
+            return await _context.Cities.ToListAsync();
+
+         
+
         }
 
-        public async Task<bool> Post(City model)
+        public async Task<bool> Post(City Model)
         {
-            await _context.Cities.AddAsync(model);
+            await _context.Cities.AddAsync(Model);
             var status =await  _context.SaveChangesAsync();
             if (status > 0)
             {
@@ -55,10 +59,10 @@ namespace Payment.Domain
 
         }
 
-        public async Task<bool> Put(int id, City model)
+        public async Task<bool> Put(City Model)
         {
-            var city = await _context.Cities.FirstOrDefaultAsync(c => c.CityId.Equals(id));
-            city.CityName = model.CityName;
+            var city = await _context.Cities.FirstOrDefaultAsync(c => c.CityId.Equals(Model.CityId));
+            city.CityName = Model.CityName;
             var status =await _context.SaveChangesAsync();
             if (status > 0)
             {
@@ -71,9 +75,9 @@ namespace Payment.Domain
 
     public interface ICityDomain
     {
-        Task<bool> Post(City model);
-        Task<bool> Put(int id, City model);
-        Task<bool> Delete(int id);
+        Task<bool> Post(City Model);
+        Task<bool> Put(City Model);
+        Task<bool> Delete(int Id);
 
         Task<List<City>> GetAll();
     }

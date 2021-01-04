@@ -14,6 +14,6 @@ namespace Payment.Entity.DbModels
         [Column(TypeName ="nvarchar(150)")]
         public string Name { get; set; }
 
-        public ICollection<Products> Products { get; set; } 
+        public ICollection<Products> products { get; set; } 
     }
 }

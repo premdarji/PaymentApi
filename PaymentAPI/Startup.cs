@@ -20,6 +20,15 @@ using Payment.Entity;
 using Microsoft.AspNetCore.Cors;
 using AutoMapper;
 using Swashbuckle.AspNetCore.Swagger;
+using Newtonsoft.Json.Serialization;
+using System.IO;
+using NLog;
+using LoggerService;
+using PaymentAPI.Extensions;
+using Microsoft.AspNetCore.Authentication;
+using PaymentAPI.Middleware;
+using Payment.Entity.ViewModels;
+using PaymentAPI.HubConfig;
 
 namespace PaymentAPI
 {
@@ -28,6 +37,9 @@ namespace PaymentAPI
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            LogManager.LoadConfiguration(String.Concat(Directory.GetCurrentDirectory(), "/Nlog.config"));
+            Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
@@ -35,37 +47,56 @@ namespace PaymentAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //signalr configuration
+            services.AddSignalR();
 
+            //services.ConfigureLoggerService();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            //email configuration
+            //var emailConfig = Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+            //services.AddSingleton(emailConfig);
+
+            services.AddScoped<IEmailSender, EmailSender>();
+            //
 
             services.AddMvc(opt =>
             {
                 opt.Filters.Add(typeof(ValidatorActionFilter));
             }).AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
-
+           
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddDbContext<ApplicationContext>(option => option.UseSqlServer(Configuration.GetConnectionString("connection"),b=>b.MigrationsAssembly("PaymentAPI")));
+           services.AddDbContext<ApplicationContext>(option => option.UseSqlServer(Configuration.GetConnectionString("connection"),b=>b.MigrationsAssembly("PaymentAPI")));
 
 
-            services.AddSwaggerGen(c => {
-                c.SwaggerDoc("v1", new Info
-                {
-                    Version = "v1",
-                    Title = "Payment API",
-                    Description = "ASP.NET Core Web API"
-                });
-            });
+            //services.AddMvc().AddJsonOptions(option => option.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver());
+            //services.AddSwaggerGen(c => {
+            //    c.SwaggerDoc("v1", new Info
+            //    {
+            //        Version = "v1",
+            //        Title = "Payment API",
+            //        Description = "ASP.NET Core Web API"
+            //    });
+            //});
+
+
+            services.AddSwaggerGen();
+
 
             //injecting depedecies
+            services.AddScoped<ApplicationContext>();
             services.AddScoped<IUserDomain, UserDomain>();
             services.AddScoped<ICityDomain, CityDomain>();
             services.AddScoped<ICategoryDomain, CategoryDomain>();
-            services.AddScoped<IProductDomain, ProductDomain>();
+            services.AddTransient<IProductDomain, ProductDomain>();
             services.AddScoped<ICartDomain, CartDomain>();
             services.AddScoped<IWishlistDomain, WishlistDomain>();
             services.AddScoped<IOrderDomain, OrderDomain>();
-
+            services.AddScoped<ICommonDomain, CommonDomain>();
+            services.AddSingleton<ILoggerManager,LoggerManager>();
+           
+            //services.AddScoped<IApplicationContext, ApplicationContext>();
 
 
             //jwt authentication
@@ -100,6 +131,14 @@ namespace PaymentAPI
         {
 
 
+
+            app.UseSignalR(endpoints =>
+            {
+                endpoints.MapHub<DataHub>("/Product");
+            });
+
+            app.ConfigureCustomExceptionMiddleware();
+           // app.UseAuthenticationMiddleware();
             app.UseSwagger();
 
             app.UseSwaggerUI(c =>
@@ -108,10 +147,16 @@ namespace PaymentAPI
             });
 
 
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            //if (env.IsDevelopment())
+            //{
+            //    app.UseDeveloperExceptionPage();
+            //}
+
+
+            app.UseHttpsRedirection();
+            //app.UseRouting();
+
+
             app.UseAuthentication();
 
             //app.UseCors("CorsPolicy");
@@ -120,7 +165,10 @@ namespace PaymentAPI
            builder.WithOrigins("http://localhost:4200")
                .AllowAnyHeader()
                .AllowAnyMethod());
+
             app.UseMvc();
+
+
 
 
 

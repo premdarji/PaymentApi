@@ -12,15 +12,16 @@ namespace Payment.Domain
     public class CategoryDomain : ICategoryDomain
     {
         ApplicationContext _context;
-        public CategoryDomain(ApplicationContext context)
+        public CategoryDomain(ApplicationContext Context)
         {
-            _context = context;
+            _context = Context;
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task<bool> Delete(int Id)
         {
-            var category =await  _context.Catergory.FirstOrDefaultAsync(m => m.CategoryId.Equals(id));
-            _context.Catergory.Remove(category);
+            var category =await  _context.Catergory.FirstOrDefaultAsync(m => m.CategoryId.Equals(Id));
+            var test = category != null ? _context.Catergory.Remove(category) : null;
+            //_context.Catergory.Remove(category);
             var status = await _context.SaveChangesAsync();
             if (status > 0)
             {
@@ -34,14 +35,14 @@ namespace Payment.Domain
             return await _context.Catergory.ToListAsync();
         }
 
-        public async Task<Category> GetById(int id)
+        public async Task<Category> GetById(int Id)
         {
-            return await _context.Catergory.FirstOrDefaultAsync(m => m.CategoryId.Equals(id));
+            return await _context.Catergory.FirstOrDefaultAsync(m => m.CategoryId.Equals(Id));
         }
 
-        public async Task<bool> Post(Category model)
+        public async Task<bool> Post(Category Model)
         {
-            _context.Catergory.Add(model);
+            _context.Catergory.Add(Model);
             var status = await _context.SaveChangesAsync();
             if (status > 0)
             {
@@ -51,10 +52,10 @@ namespace Payment.Domain
 
         }
 
-        public async Task<bool> Put(int id, Category model)
+        public async Task<bool> Put(Category Model)
         {
-            var category = await _context.Catergory.FirstOrDefaultAsync(m => m.CategoryId.Equals(id));
-            category.Name = model.Name;
+            var category = await _context.Catergory.FirstOrDefaultAsync(m => m.CategoryId.Equals(Model.CategoryId));
+            category.Name = Model.Name;
             var status = await _context.SaveChangesAsync();
             if (status > 0)
             {
@@ -69,12 +70,12 @@ namespace Payment.Domain
     {
         Task<List<Category>> GetAll();
 
-        Task<bool> Post(Category model);
+        Task<bool> Post(Category Model);
 
-        Task<bool> Put(int id, Category model);
+        Task<bool> Put(Category Model);
 
-        Task<Category> GetById(int id);
+        Task<Category> GetById(int Id);
 
-        Task<bool> Delete(int id);
+        Task<bool> Delete(int Id);
     }
 }

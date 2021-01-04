@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Payment.Domain;
 using Payment.Entity.DbModels;
+using Payment.Entity.ViewModels;
 
 namespace PaymentAPI.Controllers
 {
@@ -52,5 +53,42 @@ namespace PaymentAPI.Controllers
             }
             return BadRequest();
         }
+
+
+
+        [HttpPost]
+        [Route("Invoice")]
+        public async Task<ActionResult> SendInvoiceMail([FromBody]int id)
+        {
+           await _Order.SendInvoiceMail(id);
+
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("OrderById/{id}")]
+        public async Task<ActionResult> GetOrderById(int id)
+        {
+            var order = await _Order.GetOrderById(id);
+            if (order != null)
+            {
+                return Ok(order);
+            }
+            return BadRequest();
+        }
+
+        [HttpPost]
+        [Route("CancelOrder")]
+        public async Task<ActionResult> CancelOrder(CancelOrder model)
+        {
+            bool status = await _Order.CancelOrder(model);
+            if (status == true)
+            {
+                return Ok(status);
+            }
+            return BadRequest(status);
+        }
+
+       
     }
 }

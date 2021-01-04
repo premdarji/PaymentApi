@@ -24,5 +24,7 @@ namespace PaymentAPI.Controllers
         public IWishlistDomain _Wishlist { get; set; }
 
         public IOrderDomain _Order { get; set; }
+
+        public ICommonDomain _common { get; set; }
     }
 }

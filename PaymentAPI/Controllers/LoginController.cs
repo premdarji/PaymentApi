@@ -30,19 +30,18 @@ namespace PaymentAPI.Controllers
             this._domain = domain;
         }
 
-
         [HttpPost]
         [Route("login")]
-        public async Task<ActionResult<string>> Login(LoginVM model)
+        public async Task<ActionResult<string>> Login(LoginVM Model)
         {
-            ValidationResult result = loginvalidator.Validate(model);
+            ValidationResult result = loginvalidator.Validate(Model);
 
             if (result.IsValid == false)
             {
                 return BadRequest(new { result.Errors });
             }
 
-            var user = await _domain.Check(model);
+            var user = await _domain.Check(Model);
 
             if (user != null)
             {
@@ -57,15 +56,15 @@ namespace PaymentAPI.Controllers
         [Authorize]
         [HttpPost]
         [Route("ChangePassword")]
-        public async Task<ActionResult> ChangePassword(ChangePasswordVM model)
+        public async Task<ActionResult> ChangePassword(ChangePasswordVM Model)
         {
-            ValidationResult result = passwordvalidator.Validate(model);
+            ValidationResult result = passwordvalidator.Validate(Model);
             if (result.IsValid == false)
             {
                 return BadRequest(new { result.Errors });
             }
 
-            var status = await _domain.ChangePassword(model);
+            var status = await _domain.ChangePassword(Model);
             if (status == true)
             {
 
@@ -91,9 +90,9 @@ namespace PaymentAPI.Controllers
         [Authorize]
         [HttpPost]
         [Route("Reset")]
-        public async Task<ActionResult> ResetPassword(ResetPasswordVM model)
+        public async Task<ActionResult> ResetPassword(ResetPasswordVM Model)
         {
-            var status = await _domain.ResetPassword(model);
+            var status = await _domain.ResetPassword(Model);
             if (status == true)
             {
                 return Ok(new {message= "Password Reset" });
@@ -101,18 +100,41 @@ namespace PaymentAPI.Controllers
             return BadRequest();
         }
 
+        [HttpPost]
+        [Route("AdminLogin")]
+        public async Task<ActionResult> AdminLogin(LoginVM Model)
+        {
+            ValidationResult result = loginvalidator.Validate(Model);
 
-        public ActionResult<string> CreateToken(int id,string email)
+            if (result.IsValid == false)
+            {
+                return BadRequest(new { result.Errors });
+            }
+
+            var user = await _domain.AdminCheck(Model);
+
+            if (user != null)
+            {
+                var token = CreateToken(user.UserId, user.Email);
+                return Ok(token);
+            }
+            else
+                return Ok(new { message = "invalid credentials" });
+
+        }
+
+
+        public ActionResult<string> CreateToken(int Id,string Email)
         {
             //var id = user.UserId.ToString();
-            var Id = id.ToString();
-            var Email = email.ToString();
+            var id = Id.ToString();
+            var email = Email.ToString();
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                        new Claim("UserID",Id),
-                        new Claim("Email",Email)
+                        new Claim("UserID",id),
+                        new Claim("Email",email)
                 }),
                 Expires = DateTime.UtcNow.AddDays(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes("1234567890123456")), SecurityAlgorithms.HmacSha256Signature)

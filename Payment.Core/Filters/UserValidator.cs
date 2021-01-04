@@ -65,9 +65,9 @@ namespace Payment.Core.Filters
     {
         public ProductValidator()
         {
-            RuleFor(m => m.ImageUrl).NotEmpty();
+            //RuleFor(m => m.ImageUrl).NotEmpty();
             RuleFor(m => m.Price).NotEmpty();
-            RuleFor(m => m.CategoryId).NotEmpty();
+           // RuleFor(m => m.CategoryId).NotEmpty();
             RuleFor(m => m.Name).NotEmpty();
         }
     }
