@@ -13,15 +13,15 @@ namespace PaymentAPI.Controllers
     [ApiController]
     public class WishlistController : BaseController
     {
-        public WishlistController(IWishlistDomain Domain) 
+        public WishlistController(IWishlistDomain domain) 
         {
-            this._Wishlist = Domain;
+            this._Wishlist = domain;
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(Wishlist Model)
+        public async Task<ActionResult> post(Wishlist model)
         {
-            var status = await _Wishlist.Post(Model);
+            var status = await _Wishlist.post(model);
             if (status == true)
             {
                 return Ok(new { message = "Added" });
@@ -30,9 +30,9 @@ namespace PaymentAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Wishlist>>> GetAll()
+        public async Task<ActionResult<List<Wishlist>>> getAll()
         {
-            var wishlist = await _Wishlist.GetAll();
+            var wishlist = await _Wishlist.getAll();
             if (wishlist != null)
             {
                 return wishlist;
@@ -42,9 +42,9 @@ namespace PaymentAPI.Controllers
 
         [HttpPost]
         [Route("Remove/{id}/{userid}")]
-        public async Task<ActionResult> Delete(int Id,int Userid)
+        public async Task<ActionResult> delete(int id,int userId)
         {
-            var status = await _Wishlist.Delete(Id, Userid);
+            var status = await _Wishlist.delete(id, userId);
             if (status == true)
             {
                 return Ok(new { message = "Deleted" });

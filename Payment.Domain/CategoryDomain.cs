@@ -17,11 +17,10 @@ namespace Payment.Domain
             _context = Context;
         }
 
-        public async Task<bool> Delete(int Id)
+        public async Task<bool> delete(int id)
         {
-            var category =await  _context.Catergory.FirstOrDefaultAsync(m => m.CategoryId.Equals(Id));
+            var category =await  _context.Catergory.FindAsync(id);
             var test = category != null ? _context.Catergory.Remove(category) : null;
-            //_context.Catergory.Remove(category);
             var status = await _context.SaveChangesAsync();
             if (status > 0)
             {
@@ -30,19 +29,19 @@ namespace Payment.Domain
             return false;
         }
 
-        public async Task<List<Category>> GetAll()
+        public async Task<List<Category>> getAll()
         {
             return await _context.Catergory.ToListAsync();
         }
 
-        public async Task<Category> GetById(int Id)
+        public async Task<Category> getById(int id)
         {
-            return await _context.Catergory.FirstOrDefaultAsync(m => m.CategoryId.Equals(Id));
+            return await _context.Catergory.FindAsync(id);
         }
 
-        public async Task<bool> Post(Category Model)
+        public async Task<bool> post(Category model)
         {
-            _context.Catergory.Add(Model);
+            _context.Catergory.Add(model);
             var status = await _context.SaveChangesAsync();
             if (status > 0)
             {
@@ -52,10 +51,10 @@ namespace Payment.Domain
 
         }
 
-        public async Task<bool> Put(Category Model)
+        public async Task<bool> put(Category model)
         {
-            var category = await _context.Catergory.FirstOrDefaultAsync(m => m.CategoryId.Equals(Model.CategoryId));
-            category.Name = Model.Name;
+            var category = await _context.Catergory.FindAsync(model.CategoryId);
+            category.Name = model.Name;
             var status = await _context.SaveChangesAsync();
             if (status > 0)
             {
@@ -68,14 +67,14 @@ namespace Payment.Domain
 
     public interface ICategoryDomain
     {
-        Task<List<Category>> GetAll();
+        Task<List<Category>> getAll();
 
-        Task<bool> Post(Category Model);
+        Task<bool> post(Category model);
 
-        Task<bool> Put(Category Model);
+        Task<bool> put(Category model);
 
-        Task<Category> GetById(int Id);
+        Task<Category> getById(int id);
 
-        Task<bool> Delete(int Id);
+        Task<bool> delete(int id);
     }
 }

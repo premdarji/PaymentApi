@@ -38,9 +38,9 @@ namespace PaymentAPI.Controllers
 
         [HttpPost]
         [Route("Register")]
-        public async Task<ActionResult<IList<ValidationFailure>>> Post(User Model)
+        public async Task<ActionResult<IList<ValidationFailure>>> post(User model)
         { 
-            ValidationResult result = validator.Validate(Model);
+            ValidationResult result = validator.Validate(model);
             //  int id = model.CityId.Value; check error
 
             // string[] myarray = new string[10]; google
@@ -52,7 +52,7 @@ namespace PaymentAPI.Controllers
             }
 
             
-            var status = await _domain.Post(Model);
+            var status = await _domain.post(model);
 
             if (status == true)
             {
@@ -66,16 +66,16 @@ namespace PaymentAPI.Controllers
         [HttpPut]
         [Route("Update/{id}")]
 
-        public async Task<ActionResult> Put(int Id,UserVM Model)
+        public async Task<ActionResult> put(int id,UserVM model)
         {
           
-            if (Id == 0)
+            if (id == 0)
             {
                 return BadRequest();
             }
             else
             {
-                ValidationResult result = vmvalidator.Validate(Model);
+                ValidationResult result = vmvalidator.Validate(model);
 
                 if (result.IsValid == false)
                 {
@@ -83,7 +83,7 @@ namespace PaymentAPI.Controllers
                 }
 
 
-                var status = await _domain.Put(Id, Model);
+                var status = await _domain.put(id, model);
                 if (status == true)
                 {
                     return Ok();
@@ -97,9 +97,9 @@ namespace PaymentAPI.Controllers
 
         [HttpGet]
         [Route("GetbyId/{id}")]
-        public async Task<ActionResult> GetUserByID(int Id)
+        public async Task<ActionResult> getUserByID(int id)
         {
-            var user = await _domain.GetbyID(Id);
+            var user = await _domain.getbyID(id);
             if (user!=null)
             {
                 return Ok(user);
@@ -111,9 +111,9 @@ namespace PaymentAPI.Controllers
 
         [HttpDelete]
         [Route("delete/{id}")]
-        public async  Task<ActionResult> Delete(int Id)
+        public async  Task<ActionResult> delete(int id)
         {
-            var status = await _domain.Delete(Id);
+            var status = await _domain.delete(id);
             if (status == true)
             {
                 return Ok(new { message = "user deleted" });
@@ -123,17 +123,17 @@ namespace PaymentAPI.Controllers
 
         [HttpGet]
         [Route("GetAll")]
-        public async Task<ActionResult<List<User>>> GetAll()
+        public async Task<ActionResult<List<User>>> getAll()
         {
-            var users = await _domain.GetAll();
+            var users = await _domain.getAll();
             return users;
         }
        
         [HttpPost]
         [Route("Activate/{id}")]
-        public async Task<ActionResult> ActivateUser(int id)
+        public async Task<ActionResult> activateUser(int id)
         {
-            var result = await _domain.ActivateUser(id);
+            var result = await _domain.activateUser(id);
             if (result == true)
             {
                 return Ok();
@@ -141,19 +141,14 @@ namespace PaymentAPI.Controllers
             return BadRequest();
         }
 
-
-
-       
+        [HttpPost]
+        [Route("UpdateWallet")]
+        public async Task<ActionResult> updateWallet(WalletVM wallet)
+        {
+            var result = await _domain.updateWallet(wallet);
+            return Ok(result);
+        }   
 
     }
 
-
-
-
-    public class Apiresponsemodel
-    {
-        public int StatusCode { get; set; }
-        public string Message { get; set; }
-        public dynamic  ResponseData { get; set; } //check generic return type
-    }
 }

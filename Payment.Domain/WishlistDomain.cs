@@ -12,14 +12,14 @@ namespace Payment.Domain
     public class WishlistDomain : IWishlistDomain
     {
         ApplicationContext _context;
-        public WishlistDomain(ApplicationContext Context)
+        public WishlistDomain(ApplicationContext context)
         {
-            _context = Context;
+            _context = context;
                 
         }
-        public async Task<bool> Delete(int Id,int Userid)
+        public async Task<bool> delete(int id,int userId)
         {
-            var wish = await _context.Wishlist.FirstOrDefaultAsync(m => m.ProductId.Equals(Id) && m.UserId.Equals(Userid));
+            var wish = await _context.Wishlist.FirstOrDefaultAsync(m => m.ProductId.Equals(id) && m.UserId.Equals(userId));
             var test = wish != null ? _context.Wishlist.Remove(wish) : null;
             //_context.Wishlist.Remove(wish);
             var status = await _context.SaveChangesAsync();
@@ -30,17 +30,17 @@ namespace Payment.Domain
             return false;
         }
 
-        public async Task<List<Wishlist>> GetAll()
+        public async Task<List<Wishlist>> getAll()
         {
             return await _context.Wishlist.ToListAsync();
         }
 
-        public async Task<bool> Post(Wishlist Model)
+        public async Task<bool> post(Wishlist model)
         {
-            var wish = await _context.Wishlist.FirstOrDefaultAsync(m => m.ProductId == Model.ProductId && m.UserId == Model.UserId);
+            var wish = await _context.Wishlist.FirstOrDefaultAsync(m => m.ProductId == model.ProductId && m.UserId == model.UserId);
             if (wish == null)
             {
-                await _context.Wishlist.AddAsync(Model);
+                await _context.Wishlist.AddAsync(model);
                 var status =await _context.SaveChangesAsync();
                 if (status > 0)
                 {
@@ -59,9 +59,9 @@ namespace Payment.Domain
 
     public interface IWishlistDomain
     {
-        Task<bool> Post(Wishlist Model);
-        Task<bool> Delete(int Id,int Userid);
+        Task<bool> post(Wishlist model);
+        Task<bool> delete(int id,int userId);
 
-        Task<List<Wishlist>> GetAll();
+        Task<List<Wishlist>> getAll();
     }
 }

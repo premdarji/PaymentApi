@@ -18,29 +18,35 @@ namespace Payment.Domain
     {
         ApplicationContext _context;
         IEmailSender _emailSender;
-        public OrderDomain(ApplicationContext Context,IEmailSender EmailSender)
+        public OrderDomain(ApplicationContext context,IEmailSender emailSender)
         {
-            _context = Context;
-            _emailSender = EmailSender;
+            _context = context;
+            _emailSender = emailSender;
         }
 
-        public async Task<List<vOrder>> GetAll(int Id)
+        public async Task<List<vOrder>> getAll(int id)
         {
-            return await _context.vOrder.Where(m => m.UserId == Id).ToListAsync();
+            return await _context.vOrder.Where(m => m.UserId == id && m.IsDeleted==false).ToListAsync();
         }
 
-        public async Task<vOrder> GetOrderById(int Id)
+        public async Task<vOrder> getOrderById(int id)
         {
-            return await _context.vOrder.Where(x => x.DetailOrderId == Id).FirstOrDefaultAsync();
+            return await _context.vOrder.Where(x => x.DetailOrderId == id).FirstOrDefaultAsync();
         }
 
-        public async Task<int> Post(Order Model)
+        public async Task<int> post(Order model)
         {
-            Model.CreatedOn = DateTime.Now;
-            await _context.Order.AddAsync(Model);
+            if (model.PaymentId == "wallet")
+            {
+                var user = await _context.Users.FindAsync(model.UserId);
+                user.WalletAmt -= model.Amount;
+                //await _context.SaveChangesAsync();
+            }
+            model.CreatedOn = DateTime.Now;
+            await _context.Order.AddAsync(model);
             var status = await _context.SaveChangesAsync();
-            int id = Model.OrderId;
-            int userid = Model.UserId;
+            int id = model.OrderId;
+            int userid = model.UserId;
 
             //invoice
             Invoice invoice = new Invoice()
@@ -59,14 +65,14 @@ namespace Payment.Domain
             return 0;
         }
 
-        public async Task<bool> PostDetail(DetailOrder Model)
+        public async Task<bool> postDetail(DetailOrder model)
         {
             
-            _context.DetailOrders.Add(Model);
+            _context.DetailOrders.Add(model);
             _context.SaveChanges();
-            var Product = _context.Products.FirstOrDefault(m => m.ProductId == Model.ProductId);
-            Product.Quantity = Product.Quantity - Model.Quantity;
-            var status =  await _context.SaveChangesAsync();
+            var Product = _context.Products.FirstOrDefault(m => m.ProductId == model.ProductId);
+            Product.Quantity = Product.Quantity - model.Quantity;
+            var status = await _context.SaveChangesAsync();
             if (status > 0)
             {
                 return true;
@@ -75,11 +81,11 @@ namespace Payment.Domain
         }
 
     
-        public async Task SendInvoiceMail(int Id)
+        public async Task sendInvoiceMail(int id)
         {
-            var order = await _context.Order.Where(x => x.OrderId == Id).FirstOrDefaultAsync();
+            var order = await _context.Order.Where(x => x.OrderId == id).FirstOrDefaultAsync();
             var profile = await _context.Users.Where(x => x.UserId == order.UserId).FirstOrDefaultAsync();
-            var invoiceItems = await _context.vOrder.Where(x => x.OrderId == Id).ToListAsync();
+            var invoiceItems = await _context.vOrder.Where(x => x.OrderId == id).ToListAsync();
             string details=null;
             foreach(var item in invoiceItems)
             {
@@ -93,26 +99,23 @@ namespace Payment.Domain
                     "</table>" +
                     "</div>";
 
-
             //var message = new Message(profile.Email, "Invoice Details", "This email is sent you to give invoice");
             //await _emailSender.ConfirmationEmail(message,Id);
             var message = new Message(profile.Email, "Order Confirmation", data);
             _emailSender.SendEmail(message);
-
-
         }
 
-        public async Task<bool> CancelOrder(CancelOrder Model)
+        public async Task<bool> cancelOrder(CancelOrder model)
         {
-            var order =await  _context.DetailOrders.Where(x => x.DetailOrderId == Model.OrderId).FirstOrDefaultAsync();
+            var order =await  _context.DetailOrders.Where(x => x.DetailOrderId == model.OrderId).FirstOrDefaultAsync();
             if (order != null)
             {
                 var product = await _context.Products.Where(x => x.ProductId == order.ProductId).FirstOrDefaultAsync();
-                 _context.DetailOrders.Remove(order);
-
-                _context.CancelOrder.Add(Model);
+                // _context.DetailOrders.Remove(order);
+                order.IsDeleted = true;
+                _context.CancelOrder.Add(model);
                 product.Quantity = product.Quantity + order.Quantity;
-                await SendCancellationMail(Model.OrderId);
+                await sendCancellationMail(model.OrderId);
                 var status = await _context.SaveChangesAsync();
                 if (status > 0)
                 {
@@ -123,9 +126,9 @@ namespace Payment.Domain
             return false;
         }
 
-        public async Task SendCancellationMail(int Id)
+        public async Task sendCancellationMail(int id)
         {
-            var order = await _context.vOrder.Where(x => x.DetailOrderId == Id).FirstOrDefaultAsync();
+            var order = await _context.vOrder.Where(x => x.DetailOrderId == id).FirstOrDefaultAsync();
             var profile = await _context.Users.Where(x => x.UserId == order.UserId).FirstOrDefaultAsync();
 
             var data = "<div class='container'>" +
@@ -161,21 +164,21 @@ namespace Payment.Domain
 
     public interface IOrderDomain
     {
-        Task<int> Post(Order Model);
+        Task<int> post(Order model);
 
-        Task<List<vOrder>> GetAll(int Id);
+        Task<List<vOrder>> getAll(int id);
 
-        Task<bool> PostDetail(DetailOrder  Model);
+        Task<bool> postDetail(DetailOrder  model);
 
       
 
-        Task SendInvoiceMail(int Id);
+        Task sendInvoiceMail(int id);
 
-        Task<vOrder> GetOrderById(int Id);
+        Task<vOrder> getOrderById(int id);
 
-        Task<bool> CancelOrder(CancelOrder Model);
+        Task<bool> cancelOrder(CancelOrder model);
 
-        Task SendCancellationMail(int Id);
+        Task sendCancellationMail(int id);
 
 
 

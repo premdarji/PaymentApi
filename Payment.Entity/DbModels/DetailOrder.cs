@@ -9,12 +9,15 @@ namespace Payment.Entity.DbModels
     {
         [Key]
         public int DetailOrderId { get; set; }
+
         public int ProductId { get; set; }
         public decimal Amount { get; set; }
         public int Quantity { get; set; }
         public int OrderId { get; set; }
 
-        public Products Product { get; set; }
-        public Order Order { get; set; }
+        public bool IsDeleted { get; set; }
+
+        //public Products Product { get; set; }
+        //public Order Order { get; set; }
     }
 }

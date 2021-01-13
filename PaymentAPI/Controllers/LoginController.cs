@@ -32,16 +32,16 @@ namespace PaymentAPI.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<ActionResult<string>> Login(LoginVM Model)
+        public async Task<ActionResult<string>> login(LoginVM model)
         {
-            ValidationResult result = loginvalidator.Validate(Model);
+            ValidationResult result = loginvalidator.Validate(model);
 
             if (result.IsValid == false)
             {
                 return BadRequest(new { result.Errors });
             }
 
-            var user = await _domain.Check(Model);
+            var user = await _domain.check(model);
 
             if (user != null)
             {
@@ -56,15 +56,15 @@ namespace PaymentAPI.Controllers
         [Authorize]
         [HttpPost]
         [Route("ChangePassword")]
-        public async Task<ActionResult> ChangePassword(ChangePasswordVM Model)
+        public async Task<ActionResult> changePassword(ChangePasswordVM model)
         {
-            ValidationResult result = passwordvalidator.Validate(Model);
+            ValidationResult result = passwordvalidator.Validate(model);
             if (result.IsValid == false)
             {
                 return BadRequest(new { result.Errors });
             }
 
-            var status = await _domain.ChangePassword(Model);
+            var status = await _domain.changePassword(model);
             if (status == true)
             {
 
@@ -75,9 +75,9 @@ namespace PaymentAPI.Controllers
 
         [HttpPost]
         [Route("ForgotPassword")]
-        public async Task<ActionResult<string>> ForgotPassword([FromQuery]string Email)
+        public async Task<ActionResult<string>> forgotPassword([FromQuery]string email)
         {
-            var user = await _domain.PasswordRecovery(Email);
+            var user = await _domain.passwordRecovery(email);
             if (user != null)
             {
                 var token =  CreateToken(user.UserId, user.Email);
@@ -90,9 +90,9 @@ namespace PaymentAPI.Controllers
         [Authorize]
         [HttpPost]
         [Route("Reset")]
-        public async Task<ActionResult> ResetPassword(ResetPasswordVM Model)
+        public async Task<ActionResult> resetPassword(ResetPasswordVM model)
         {
-            var status = await _domain.ResetPassword(Model);
+            var status = await _domain.resetPassword(model);
             if (status == true)
             {
                 return Ok(new {message= "Password Reset" });
@@ -102,16 +102,16 @@ namespace PaymentAPI.Controllers
 
         [HttpPost]
         [Route("AdminLogin")]
-        public async Task<ActionResult> AdminLogin(LoginVM Model)
+        public async Task<ActionResult> adminLogin(LoginVM model)
         {
-            ValidationResult result = loginvalidator.Validate(Model);
+            ValidationResult result = loginvalidator.Validate(model);
 
             if (result.IsValid == false)
             {
                 return BadRequest(new { result.Errors });
             }
 
-            var user = await _domain.AdminCheck(Model);
+            var user = await _domain.adminCheck(model);
 
             if (user != null)
             {

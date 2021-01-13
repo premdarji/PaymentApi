@@ -24,18 +24,18 @@ namespace PaymentAPI.Controllers
 
         private IHubContext<DataHub> _hub;
 
-        public ProductController(IProductDomain Product, IHubContext<DataHub> Hub)
+        public ProductController(IProductDomain product, IHubContext<DataHub> hub)
         {
-            this._Product = Product;
-            _hub = Hub;
+            this._Product = product;
+            _hub = hub;
         }
 
         [HttpGet]
         [Route("GetAll/{id}/{pagenumber}/{pagesize}")]
-        public async Task<ActionResult> GetAll(int Id,int Pagenumber,int Pagesize)
+        public async Task<ActionResult> getAll(int id,int pageNumber,int pageSize)
         {
-            Pagesize=Pagenumber==5?Pagesize=20:Pagesize=6;
-            var products =await _Product.GetAll(Id,Pagenumber,Pagesize);
+            pageSize=pageNumber==5?pageSize=20:pageSize=6;
+            var products =await _Product.getAll(id,pageNumber,pageSize);
             if (products.Count> 0)
             {
                 return Ok(products);
@@ -45,9 +45,9 @@ namespace PaymentAPI.Controllers
 
         [HttpGet]
         [Route("GetById/{id}")]
-        public async Task<ActionResult> GetById(int Id)
+        public async Task<ActionResult> getById(int id)
         {
-            var product =await _Product.GetById(Id);
+            var product =await _Product.getById(id);
             if (product != null)
             {
                 return Ok(product);
@@ -58,9 +58,9 @@ namespace PaymentAPI.Controllers
 
         [HttpGet]
         [Route("GetByCategory/{id}")]
-        public async Task<ActionResult> GetByCategory(int Id)
+        public async Task<ActionResult> getByCategory(int id)
         {
-            var product = await _Product.GetByCategory(Id);
+            var product = await _Product.getByCategory(id);
             if (product != null)
             {
                 return Ok(product);
@@ -72,17 +72,17 @@ namespace PaymentAPI.Controllers
 
         [HttpPost]
         [Route("Add")]
-        public async Task<ActionResult> Post(Products Model)
+        public async Task<ActionResult> post(Products model)
         {
 
-            ValidationResult result = validator.Validate(Model);
+            ValidationResult result = validator.Validate(model);
 
             if (result.IsValid == false)
             {
                 return BadRequest(new { result.Errors });
             }
 
-            var status = await _Product.Post(Model);
+            var status = await _Product.post(model);
             if (status==true)
             {
                 return Ok(new { message = "Product Added" });
@@ -92,17 +92,17 @@ namespace PaymentAPI.Controllers
 
         [HttpPut]
         [Route("Update")]
-        public async Task<ActionResult> Put(Products Model)
+        public async Task<ActionResult> put(Products model)
         {
 
-            ValidationResult result = validator.Validate(Model);
+            ValidationResult result = validator.Validate(model);
 
             if (result.IsValid == false)
             {
                 return BadRequest(new { result.Errors });
             }
 
-            var status = await _Product.Put(Model);
+            var status = await _Product.put(model);
             if (status == true)
             {
                 return Ok(new { message = "Product Updated" });
@@ -113,9 +113,9 @@ namespace PaymentAPI.Controllers
 
         [HttpDelete]
         [Route("Delete/{id}")]
-        public async Task<ActionResult> Delete(int Id)
+        public async Task<ActionResult> delete(int id)
         {
-            var status = await _Product.Delete(Id);
+            var status = await _Product.delete(id);
             if (status == true)
             {
                 return Ok(new { message = "Product Deleted" });
@@ -126,23 +126,23 @@ namespace PaymentAPI.Controllers
 
         [HttpGet]
         [Route("AllProduct")]
-        public async Task<List<Products>> GetForAdmin()
+        public async Task<List<Products>> getForAdmin()
         {
-            var products = await _Product.GetProductsForAdmin();
+            var products = await _Product.getProductsForAdmin();
             //var timerManager = new TimerManager(() =>_hub.Clients.All.SendAsync("transferAdmindata",_Product.GetProductsForAdmin()));
             return products;
         }
 
         [HttpGet]
         [Route("SignalR")]
-        public IActionResult CheckingSignalR()
+        public IActionResult checkingSignalR()
         {
-            var timerManager = new TimerManager(() => _hub.Clients.All.SendAsync("transferAdmindata", _Product.CheckingForSignal()));
+            var timerManager = new TimerManager(() => _hub.Clients.All.SendAsync("transferAdmindata", _Product.checkingForSignal()));
             return Ok(new { message = "request" });
         }
 
 
-        public static List<ChartModel> GetData()
+        public static List<ChartModel> getData()
         {
             var r = new Random();
             return new List<ChartModel>()

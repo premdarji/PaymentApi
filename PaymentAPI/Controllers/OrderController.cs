@@ -20,9 +20,9 @@ namespace PaymentAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(Order model)
+        public async Task<ActionResult> post(Order model)
         {
-            var status = await _Order.Post(model);
+            var status = await _Order.post(model);
             if (status>0)
             {
                 return Ok(new { id=status });
@@ -32,9 +32,9 @@ namespace PaymentAPI.Controllers
 
         [HttpGet]
         [Route("GetAll/{id}")]
-        public async Task<ActionResult> GetAll(int id)
+        public async Task<ActionResult> getAll(int id)
         {
-            var orders = await _Order.GetAll(id);
+            var orders = await _Order.getAll(id);
             if (orders != null)
             {
                 return Ok(orders);
@@ -44,9 +44,9 @@ namespace PaymentAPI.Controllers
 
         [HttpPost]
         [Route("Detail")]
-        public async Task<ActionResult> StoreDetail(DetailOrder model)
+        public async Task<ActionResult> storeDetail(DetailOrder model)
         {
-            var status = await _Order.PostDetail(model);
+            var status = await _Order.postDetail(model);
             if(status==true)
             {
                 return Ok();
@@ -58,18 +58,18 @@ namespace PaymentAPI.Controllers
 
         [HttpPost]
         [Route("Invoice")]
-        public async Task<ActionResult> SendInvoiceMail([FromBody]int id)
+        public async Task<ActionResult> sendInvoiceMail([FromBody]int id)
         {
-           await _Order.SendInvoiceMail(id);
+            await _Order.sendInvoiceMail(id);
 
-            return Ok();
+            return Ok(true);
         }
 
         [HttpGet]
         [Route("OrderById/{id}")]
-        public async Task<ActionResult> GetOrderById(int id)
+        public async Task<ActionResult> getOrderById(int id)
         {
-            var order = await _Order.GetOrderById(id);
+            var order = await _Order.getOrderById(id);
             if (order != null)
             {
                 return Ok(order);
@@ -79,9 +79,9 @@ namespace PaymentAPI.Controllers
 
         [HttpPost]
         [Route("CancelOrder")]
-        public async Task<ActionResult> CancelOrder(CancelOrder model)
+        public async Task<ActionResult> cancelOrder(CancelOrder model)
         {
-            bool status = await _Order.CancelOrder(model);
+            bool status = await _Order.cancelOrder(model);
             if (status == true)
             {
                 return Ok(status);

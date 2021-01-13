@@ -16,15 +16,14 @@ namespace PaymentAPI.Controllers
     public class CartController : BaseController
     {        
         public CartController(ICartDomain Cart)
-        {
-            
+        { 
             this._Cart = Cart;
         }
 
         [HttpPost]
-        public async Task<ActionResult> Post(Cart Model)
+        public async Task<ActionResult> post(Cart model)
         {
-            var status = await _Cart.Post(Model);
+            var status = await _Cart.post(model);
             if (status == true)
             {
                 return Ok(new { message = "Added" });
@@ -34,9 +33,9 @@ namespace PaymentAPI.Controllers
 
         [HttpGet]
         [Route("GetByUserId/{id}")]
-        public async Task<ActionResult<List<vCarts>>> GetByUserId(int Id)
+        public async Task<ActionResult<List<vCarts>>> getByUserId(int id)
         {
-            var cart = await _Cart.GetByUserId(Id);
+            var cart = await _Cart.getByUserId(id);
             if (cart != null)
             {
                 return cart;
@@ -46,16 +45,16 @@ namespace PaymentAPI.Controllers
 
         [HttpGet]
         [Route("GetCount/{id}")]
-        public async Task<ActionResult<int>> GetCount(int Id)
+        public async Task<ActionResult<int>> getCount(int id)
         {
-            return  await _Cart.GetCount(Id);
+            return  await _Cart.getCount(id);
         }
 
         [HttpDelete]
         [Route("Delete/{id}")]
-        public async Task<ActionResult> Delete(int Id)
+        public async Task<ActionResult> delete(int id)
         {
-            var status = await _Cart.Delete(Id);
+            var status = await _Cart.delete(id);
             if (status == true)
             {
                 return Ok(new { message = "Deleted" });
@@ -64,10 +63,10 @@ namespace PaymentAPI.Controllers
         }
 
         [HttpPut]
-        [Route("Update/{id}/{qty}")]
-        public async Task<ActionResult> Put(int Id,int Qty)
+        [Route("Remove")]
+        public async Task<ActionResult> removeFromCart([FromBody]int id)
         {
-            var status = await _Cart.Put(Id, Qty);
+            var status = await _Cart.removeFromCart(id);
             if (status == true)
             {
                 return Ok(new { message = "Updated" });
@@ -76,14 +75,25 @@ namespace PaymentAPI.Controllers
         }
 
 
+        [HttpPut]
+        [Route("AddToCart")]
+        public async Task<ActionResult> addToCart([FromBody]int id)
+        {
+            var status = await _Cart.addToCart(id);
+            if (status == true)
+            {
+                return Ok(new { message = "Updated" });
+            }
+            return BadRequest();
+        }
+
 
         //reminder method for checkout
         [Route("Reminder")]
         [HttpGet]
-        public ActionResult Reminder()
+        public ActionResult reminder()
         {
-          
-             _Cart.Reminder();
+             _Cart.reminder();
             return Ok(new {message= "Mail send" });
         }
 

@@ -22,10 +22,10 @@ namespace PaymentAPI.Controllers
 
         [HttpPost]
         [Route("AddCity")]
-        public async Task<ActionResult> Post(City Model)
+        public async Task<ActionResult> post(City model)
         { 
 
-            var status =await city.Post(Model);
+            var status =await city.post(model);
             if (status == true)
             {
                 return Ok(new { message = "city Added" });
@@ -35,13 +35,13 @@ namespace PaymentAPI.Controllers
 
         [HttpPut]
         [Route("UpdateCity")]
-        public async Task<ActionResult> Update(City Model)
+        public async Task<ActionResult> update(City model)
         {
-            if (Model.CityId == 0)
+            if (model.CityId == 0)
             {
                 return BadRequest();
             }
-            var status = await city.Put(Model);
+            var status = await city.put(model);
             if (status == true)
             {
                 return Ok(new { message = "city Updated" });
@@ -52,9 +52,9 @@ namespace PaymentAPI.Controllers
 
         [HttpDelete]
         [Route("DeleteCity/{id}")]
-        public async Task<ActionResult> Delete(int Id)
+        public async Task<ActionResult> delete(int id)
         {
-            var status =await city.Delete(Id);
+            var status =await city.delete(id);
             if (status == true)
             {
                 return Ok(new { message = "city Deleted" });
@@ -64,9 +64,9 @@ namespace PaymentAPI.Controllers
 
         [HttpGet]
         [Route("GetAll")]
-        public async Task<ActionResult<List<City>>> GetAll()
+        public async Task<ActionResult<List<City>>> getAll()
         {
-            var cities =await city.GetAll();
+            var cities =await city.getAll();
             return cities;
         }
 

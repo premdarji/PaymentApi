@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace Payment.Entity.DbModels
@@ -15,14 +16,14 @@ namespace Payment.Entity.DbModels
         public DateTime CreatedOn { get; set; }
 
         //foreign key to product
+        [ForeignKey("Products")]
         public int ProductId { get; set; }
 
-        //roreign key to user
+        //foreign key to user
+        [ForeignKey("User")]
         public int UserId { get; set; }
 
-        public Products Product { get; set; }
-
-        public User User { get; set; }
+   
 
     }
 }

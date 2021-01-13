@@ -59,7 +59,7 @@ namespace CartReminder_topshelf
             //var emailConfig = Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
             EmailSender email = new EmailSender();
             CartDomain cart = new CartDomain(context, email);
-            cart.Reminder();
+            cart.reminder();
 
         }
         public bool Stop(HostControl hostControl)

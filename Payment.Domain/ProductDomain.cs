@@ -19,10 +19,9 @@ namespace Payment.Domain
         {
             _context = context;
         }
-        public async Task<bool> Delete(int Id)
+        public async Task<bool> delete(int id)
         {
-            var product = await _context.Products.FindAsync(Id);
-           // var product = await _context.Products.FirstOrDefaultAsync(m => m.ProductId.Equals(Id));
+            var product = await _context.Products.FindAsync(id);
             var test = product != null ? _context.Products.Remove(product):null;
             //_context.Products.Remove(product);
             var status = await _context.SaveChangesAsync();
@@ -33,34 +32,34 @@ namespace Payment.Domain
             return false;
         }
 
-        public async Task<List<ProductListViewModel>> GetAll(int Id,int Pagenumber,int Pagesize)
+        public async Task<List<ProductListViewModel>> getAll(int id,int pageNumber,int pageSize)
         {
-            SqlParameter usernameParam = new SqlParameter("@UserId", Id);
-            SqlParameter pagenumber = new SqlParameter("@PageNumber", Pagenumber);
-            SqlParameter pagesize = new SqlParameter("@PageSize", Pagesize);
+            SqlParameter userId = new SqlParameter("@UserId", id);
+            SqlParameter pagenumber = new SqlParameter("@PageNumber", pageNumber);
+            SqlParameter pagesize = new SqlParameter("@PageSize", pageSize);
 
             // Processing.  
             string sqlQuery = "EXEC [dbo].[spProductList] " +
                                 "@UserId ,@PageNumber, @PageSize";
 
-            var products = await this._context.Set<ProductListViewModel>().FromSql(sqlQuery, usernameParam, pagenumber, pagesize).ToListAsync();
+            var products = await this._context.Set<ProductListViewModel>().FromSql(sqlQuery, userId, pagenumber, pagesize).ToListAsync();
             return products;
            
         }
 
-        public async Task<List<Products>> GetByCategory(int Id)
+        public async Task<List<Products>> getByCategory(int id)
         {
-            return await _context.Products.Where(m => m.CategoryId.Equals(Id)).ToListAsync();
+            return await _context.Products.Where(m => m.CategoryId.Equals(id)).ToListAsync();
         }
 
-        public async Task<Products> GetById(int Id)
+        public async Task<Products> getById(int id)
         {
-            return await _context.Products.FirstOrDefaultAsync(m => m.ProductId.Equals(Id));
+            return await _context.Products.FindAsync(id);
         }
 
-        public async Task<bool> Post(Products Model)
+        public async Task<bool> post(Products model)
         {
-              _context.Products.Add(Model);
+              _context.Products.Add(model);
             var status = await _context.SaveChangesAsync();
             if (status > 0)
             {
@@ -70,16 +69,9 @@ namespace Payment.Domain
 
         }
 
-        public async  Task<bool> Put(Products Model)
+        public async  Task<bool> put(Products model)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(m => m.ProductId.Equals(Model.ProductId));
-            product.Price = Model.Price;
-            product.Description = Model.Description;
-            product.Name = Model.Name;
-            product.Quantity = Model.Quantity;
-            product.CategoryId = Model.CategoryId;
-            product.ImageUrl = Model.ImageUrl;
-         
+            _context.Entry(model).State = EntityState.Modified;
             var status =await _context.SaveChangesAsync();
             if (status > 0)
             {
@@ -89,13 +81,13 @@ namespace Payment.Domain
         }
 
 
-        public async Task<List<Products>> GetProductsForAdmin()
+        public async Task<List<Products>> getProductsForAdmin()
         {
             return await _context.Products.ToListAsync();
         }
 
 
-        public List<Products> CheckingForSignal()
+        public List<Products> checkingForSignal()
         {
             return _context.Products.ToList();
         }
@@ -104,18 +96,18 @@ namespace Payment.Domain
 
     public interface IProductDomain
     {
-        Task<List<ProductListViewModel>> GetAll(int Id,int Pagenumber,int Pagesize);
+        Task<List<ProductListViewModel>> getAll(int id,int pageNumber,int pageSize);
 
-        Task<Products> GetById(int Id);
-        Task<bool> Post(Products Model);
-        Task<bool> Put(Products Model);
-        Task<bool> Delete(int Id);
+        Task<Products> getById(int id);
+        Task<bool> post(Products model);
+        Task<bool> put(Products model);
+        Task<bool> delete(int id);
 
-        Task<List<Products>> GetByCategory(int Id);
+        Task<List<Products>> getByCategory(int id);
 
-        Task<List<Products>> GetProductsForAdmin();
+        Task<List<Products>> getProductsForAdmin();
 
-        List<Products> CheckingForSignal();
+        List<Products> checkingForSignal();
     }
 
 }

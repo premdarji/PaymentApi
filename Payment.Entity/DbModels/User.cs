@@ -36,12 +36,14 @@ namespace Payment.Entity.DbModels
 
         public bool IsActivated { get; set; }
 
+        public decimal WalletAmt { get; set; }
+
 
         //foreign key to city table
         public Nullable<int> CityId { get; set; }
 
 
-        public City city { get; set; }
+        //public City city { get; set; }
 
         public ICollection<Cart> Cart { get; set; }
 

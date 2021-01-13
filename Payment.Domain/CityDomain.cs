@@ -22,9 +22,9 @@ namespace Payment.Domain
             _mapper = mapper;
         }
 
-        public async Task<bool> Delete(int Id)
+        public async Task<bool> delete(int id)
         {
-            var city = await _context.Cities.FirstOrDefaultAsync(c => c.CityId.Equals(Id));
+            var city = await _context.Cities.FirstOrDefaultAsync(c => c.CityId.Equals(id));
             var test = city != null ? _context.Cities.Remove(city) : null;
              //_context.Cities.Remove(city);
             var status =await _context.SaveChangesAsync();
@@ -35,34 +35,26 @@ namespace Payment.Domain
             return false;
         }
 
-        public async Task<List<City>> GetAll()
+        public async Task<List<City>> getAll()
         {
-            //var cities = (from city in _context.Cities
-            //              orderby city.CityName descending
-            //             select city).ToList();
-            //return cities;
             return await _context.Cities.ToListAsync();
-
-         
-
         }
 
-        public async Task<bool> Post(City Model)
+        public async Task<bool> post(City model)
         {
-            await _context.Cities.AddAsync(Model);
+            await _context.Cities.AddAsync(model);
             var status =await  _context.SaveChangesAsync();
             if (status > 0)
             {
                 return true;
             }
             return false;
-
         }
 
-        public async Task<bool> Put(City Model)
+        public async Task<bool> put(City model)
         {
-            var city = await _context.Cities.FirstOrDefaultAsync(c => c.CityId.Equals(Model.CityId));
-            city.CityName = Model.CityName;
+            var city = await _context.Cities.FirstOrDefaultAsync(c => c.CityId.Equals(model.CityId));
+            city.CityName = model.CityName;
             var status =await _context.SaveChangesAsync();
             if (status > 0)
             {
@@ -75,10 +67,10 @@ namespace Payment.Domain
 
     public interface ICityDomain
     {
-        Task<bool> Post(City Model);
-        Task<bool> Put(City Model);
-        Task<bool> Delete(int Id);
+        Task<bool> post(City model);
+        Task<bool> put(City model);
+        Task<bool> delete(int id);
 
-        Task<List<City>> GetAll();
+        Task<List<City>> getAll();
     }
 }

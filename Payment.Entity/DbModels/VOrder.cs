@@ -20,5 +20,7 @@ namespace Payment.Entity.DbModels
         public int UserId { get; set; }
 
         public int OrderId { get; set; }
+
+        public bool IsDeleted { get; set; }
     }
 }

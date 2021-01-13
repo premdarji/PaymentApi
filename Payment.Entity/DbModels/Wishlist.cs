@@ -13,8 +13,8 @@ namespace Payment.Entity.DbModels
 
         public int UserId { get; set; }
 
-        public Products Product { get; set; }
+        //public Products Product { get; set; }
 
-        public User User { get; set; }
+        //public User User { get; set; }
     }
 }

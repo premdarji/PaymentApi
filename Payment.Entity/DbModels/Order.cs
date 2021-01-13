@@ -27,7 +27,7 @@ namespace Payment.Entity.DbModels
 
 
 
-        public User User { get; set; }
+        //public User User { get; set; }
 
 
         public ICollection<DetailOrder> DetailOrders { get; set; }
