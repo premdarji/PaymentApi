@@ -124,7 +124,7 @@ namespace Payment.Domain
             {
                 var email = _context.Users.Where(x => x.UserId == item.UserId).FirstOrDefault();
                 var produ = _context.Products.Where(x => x.ProductId == item.ProductId).FirstOrDefault();
-                var message = new Message(email.Email, "Test email", "This email is sent  you to give reminder about product'" + produ.Name + "'which you have order few days ago.");
+                var message = new Message(email.Email, "Test email", "This email is sent  you to give reminder about product'" + produ.Name + "'which you have added in your cart few days ago.");
                 _emailSender.SendEmail(message);
 
             }

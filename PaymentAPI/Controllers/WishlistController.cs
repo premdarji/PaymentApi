@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Payment.Domain;
 using Payment.Entity.DbModels;
+using Payment.Entity.ViewModels;
 
 namespace PaymentAPI.Controllers
 {
@@ -30,9 +31,10 @@ namespace PaymentAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Wishlist>>> getAll()
+        [Route("GetAll/{id}")]
+        public async Task<ActionResult<List<WishlistViewModel>>> getAll(int id)
         {
-            var wishlist = await _Wishlist.getAll();
+            var wishlist = await _Wishlist.getAll(id);
             if (wishlist != null)
             {
                 return wishlist;
@@ -42,9 +44,9 @@ namespace PaymentAPI.Controllers
 
         [HttpPost]
         [Route("Remove/{id}/{userid}")]
-        public async Task<ActionResult> delete(int id,int userId)
+        public async Task<ActionResult> remove(int id,int userId)
         {
-            var status = await _Wishlist.delete(id, userId);
+            var status = await _Wishlist.remove(id, userId);
             if (status == true)
             {
                 return Ok(new { message = "Deleted" });
@@ -52,5 +54,18 @@ namespace PaymentAPI.Controllers
             return BadRequest();
 
         }
+
+        [HttpPost]
+        [Route("delete")]
+        public async Task<ActionResult> delete([FromBody]int id)
+        {
+            var status = await _Wishlist.delete(id);
+            if (status == true)
+            {
+                return Ok(new { message = "Deleted" });
+            }
+            return BadRequest();
+        }
+
     }
 }

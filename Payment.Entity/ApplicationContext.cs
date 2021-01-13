@@ -51,6 +51,8 @@ namespace Payment.Entity
 
         public DbSet<CancelOrder> CancelOrder { get; set; }
 
+        public DbSet<WishlistViewModel> WishlistViewModel { get; set; }
+
 
     }
 }

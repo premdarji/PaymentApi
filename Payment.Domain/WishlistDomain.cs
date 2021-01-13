@@ -6,6 +6,8 @@ using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using System.Data.SqlClient;
+using Payment.Entity.ViewModels;
 
 namespace Payment.Domain
 {
@@ -17,7 +19,7 @@ namespace Payment.Domain
             _context = context;
                 
         }
-        public async Task<bool> delete(int id,int userId)
+        public async Task<bool> remove(int id,int userId)
         {
             var wish = await _context.Wishlist.FirstOrDefaultAsync(m => m.ProductId.Equals(id) && m.UserId.Equals(userId));
             var test = wish != null ? _context.Wishlist.Remove(wish) : null;
@@ -30,9 +32,18 @@ namespace Payment.Domain
             return false;
         }
 
-        public async Task<List<Wishlist>> getAll()
+        public async Task<List<WishlistViewModel>> getAll(int id)
         {
-            return await _context.Wishlist.ToListAsync();
+
+            SqlParameter userId = new SqlParameter("@userId", id);
+
+            // Processing.  
+            string sqlQuery = "EXEC [dbo].[wishlistItems] @userId";
+
+            var wishListItems = await this._context.Set<WishlistViewModel>().FromSql(sqlQuery, userId).ToListAsync();
+            return wishListItems;
+
+            //return await _context.Wishlist.ToListAsync();
         }
 
         public async Task<bool> post(Wishlist model)
@@ -55,13 +66,27 @@ namespace Payment.Domain
             }
            
         }
+
+        public async Task<bool> delete(int id)
+        {
+            var wish = await _context.Wishlist.FindAsync(id);
+            _context.Wishlist.Remove(wish);
+            var status=await _context.SaveChangesAsync();
+            if (status > 0)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 
     public interface IWishlistDomain
     {
         Task<bool> post(Wishlist model);
-        Task<bool> delete(int id,int userId);
+        Task<bool> remove(int id,int userId);
 
-        Task<List<Wishlist>> getAll();
+        Task<bool> delete(int id);
+
+        Task<List<WishlistViewModel>> getAll(int id);
     }
 }
